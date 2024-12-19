@@ -1,5 +1,5 @@
 const asyncHandler = (requestHandler) => {
-  (req, res, next) => {
+  return (req, res, next) => {
     Promise.resolve(requestHandler(req, res, next)).catch((err) => next(err));
   };
 };
@@ -13,7 +13,7 @@ export { asyncHandler };
 // Try catch
 // const asyncHandler = (fn) => async (req, res, next) => {
 //   try {
-//     await fn(req, res, next);
+//     await fn(req, res, next); // jo function hamne liya hai usko execute karo
 //   } catch (error) {
 //     res.status(err.code || 500).json({
 //       success: false, //  frontend walo ko easy hota hai

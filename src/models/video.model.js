@@ -20,7 +20,7 @@ const videoSchema = new Schema(
       required: true,
     },
     duration: {
-      type: Number,
+      type: Number,   // cloudinary dedega video duration
       required: true,
     },
     views: {
@@ -39,6 +39,6 @@ const videoSchema = new Schema(
   { timestamps: true }
 );
 
-videoSchema.plugin(mongooseAggregatePaginate);
+videoSchema.plugin(mongooseAggregatePaginate);  
 
 export const Video = mongoose.model("Video", videoSchema);

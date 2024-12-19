@@ -11,7 +11,7 @@ const connectDB = async () => {
     );
   } catch (error) {
     console.log("MONGODB connection FAILED", error);
-    process.exit(1); // ye jo hamari current application chal rahi hai , ye ek process par chal rahi hai. Aap process ko exit bhee kara sakte ho
+    process.exit(1); //Nodejs process deta hai isko throw error ke jagah use kar sakte hai ,   ye jo hamari current application chal rahi hai , ye ek process par chal rahi hai. Aap process ko exit bhee kara sakte ho
   }
 };
 
