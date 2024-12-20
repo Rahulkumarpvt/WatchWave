@@ -52,7 +52,7 @@ const userSchema = new Schema(
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  this.password = bcrypt.hash(this.password, 10); // Har bar password ko encrypt nahi karna hai , jab password me modification tab encrypt karna
+  this.password =await  bcrypt.hash(this.password, 10); // Har bar password ko encrypt nahi karna hai , jab password me modification tab encrypt karna
   next();
 });
 
