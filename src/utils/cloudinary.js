@@ -24,4 +24,38 @@ const uploadOnCloudinary = async (localFilePath) => {
   }
 };
 
-export { uploadOnCloudinary };
+// * Deletes a file from Cloudinary
+// * @param {string} publicId - The public ID of the file to be deleted
+// * @returns {object} - The response from Cloudinary if successful
+// * @throws {ApiError} - If deletion fails or publicId is missing
+
+const deleteFromCloudinary = async (publicId) => {
+  try {
+    if (!publicId) {
+      throw new ApiError(400, "Public ID is missing. Cannot delete file.");
+    }
+
+    // Attempt to delete the file on Cloudinary
+    const response = await cloudinary.uploader.destroy(publicId);
+
+    console.log(response);
+    // Check if the deletion was successful
+    //  if (response.result !== "ok") {
+    //    throw new ApiError(500, `Failed to delete file from Cloudinary: ${response.result}`);
+    //  }
+
+    return response;
+  } catch (error) {
+    if (!(error instanceof ApiError)) {
+      // Wrap unexpected errors in ApiError
+      throw new ApiError(
+        500,
+        "An error occurred while deleting from Cloudinary.",
+        error
+      );
+    }
+    throw error; // Rethrow if already an ApiError
+  }
+};
+
+export { uploadOnCloudinary, deleteFromCloudinary };
