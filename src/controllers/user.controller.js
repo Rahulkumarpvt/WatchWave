@@ -7,6 +7,7 @@ import {
 } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -161,8 +162,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1, //this removes the field from document
       },
     },
     {
@@ -209,8 +210,10 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       secure: true,
     };
 
-    const { accessToken, newRefreshToken } =
+    const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
+    // console.log("Access Token:", accessToken);
+    // console.log("Refresh Token:", newRefreshToken);
 
     return res
       .status(200)
@@ -253,7 +256,15 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
-  const user = User.findByIdAndUpdate(
+  // Check if the new email already exists
+  if (email) {
+    const emailExists = await User.findOne({ email });
+    if (emailExists && emailExists._id.toString() !== req.user._id.toString()) {
+      throw new ApiError(400, "Email is already in use");
+    }
+  }
+  // Proceed with the update
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
@@ -332,7 +343,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Error while uploading on cloudinary");
   }
   // Step 2: Update the user's coverImage in the database
-  const uadatedUser = await User.findByIdAndUpdate(
+  const updatedUser = await User.findByIdAndUpdate(
     req.user?._id,
     {
       $set: {
