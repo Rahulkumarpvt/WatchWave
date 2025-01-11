@@ -29,14 +29,16 @@ const uploadOnCloudinary = async (localFilePath) => {
 // * @returns {object} - The response from Cloudinary if successful
 // * @throws {ApiError} - If deletion fails or publicId is missing
 
-const deleteFromCloudinary = async (publicId) => {
+const deleteFromCloudinary = async (publicId, resource_type = "image") => {
   try {
     if (!publicId) {
       throw new ApiError(400, "Public ID is missing. Cannot delete file.");
     }
 
     // Attempt to delete the file on Cloudinary
-    const response = await cloudinary.uploader.destroy(publicId);
+    const response = await cloudinary.uploader.destroy(publicId, {
+      resource_type: `${resource_type}`,
+    });
 
     // console.log(response);
     // Check if the deletion was successful
